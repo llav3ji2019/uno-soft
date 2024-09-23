@@ -1,10 +1,10 @@
 package com.uno.test.file;
 
 import com.uno.test.utils.StringValidation;
+import com.uno.test.utils.exception.FileReadException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -35,8 +35,8 @@ public class DataReader {
             .toList();
       }
     } catch (IOException e) {
-      System.err.println("Failed to read file: " + file);
-      return Collections.emptyList();
+      System.err.println("Невозможно прочитать информацию из файла: " + file);
+      throw new FileReadException(e.getMessage());
     }
   }
 

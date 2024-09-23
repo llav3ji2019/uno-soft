@@ -1,6 +1,7 @@
 package com.uno.test.file;
 
 import com.uno.test.utils.LineComparator;
+import com.uno.test.utils.exception.FileWriteException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.List;
  * Класс для записи результатов работы в файл.
  */
 public class DataWriter {
-  private static final Comparator<List<String>> LIST_COMPARATOR = new LineComparator().reversed();
+  private static final Comparator<List<String>> LIST_COMPARATOR = new LineComparator();
 
   private final String fileName;
   private int groupCounter = 1;
@@ -28,7 +29,7 @@ public class DataWriter {
   public void writeToFile(List<List<String>> result) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
       int total = result.size();
-      writer.write("Total numbers = " + total + "\n");
+      writer.write("Общее кол-во групп = " + total + "\n");
 
       result.stream()
           .sorted(LIST_COMPARATOR)
@@ -37,6 +38,7 @@ public class DataWriter {
       writer.flush();
     } catch (IOException e) {
       System.err.println(e.getMessage());
+      throw new FileWriteException(e.getMessage());
     }
   }
 
@@ -45,6 +47,7 @@ public class DataWriter {
       writer.write(groupData);
     } catch (IOException e) {
       System.err.println(e.getMessage());
+      throw new FileWriteException(e.getMessage());
     }
   }
 

@@ -3,6 +3,7 @@ package com.uno.test;
 import com.uno.test.file.DataReader;
 import com.uno.test.file.DataWriter;
 import com.uno.test.processor.GroupingProcessor;
+import com.uno.test.utils.exception.FileNameNotFound;
 import java.io.File;
 import java.util.List;
 
@@ -11,8 +12,8 @@ public class Main {
 
   public static void main(String[] args) {
     if (args.length < 1) {
-      System.err.println("Error: Invalid file name");
-      return;
+      System.err.println("Неправильное название файла");
+      throw new FileNameNotFound("Неправильное название файла");
     }
     String fileName = args[0];
 
