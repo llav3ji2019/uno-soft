@@ -28,6 +28,7 @@ public class GroupingProcessor {
   private List<List<String>> getGroupedData(List<String> src) {
     List<List<String>> result = new ArrayList<>();
     List<Map<String, Integer>> columnGroupStatistics = new ArrayList<>();
+    Map<Integer, Integer> mergedColumnGroupStatistics = new HashMap<>();
     for (String line : src) {
       List<String> numbers = getSeparatedNumbers(line);
       TreeSet<Integer> groupsToMergeIds = new TreeSet<>();
@@ -49,29 +50,43 @@ public class GroupingProcessor {
           groupsToMergeIds.add(groupIndex);
         }
       }
-      int mainGroupIndex = groupsToMergeIds.isEmpty() ? result.size() : groupsToMergeIds.first();
+      int indexInResult = getIndexInResult(groupsToMergeIds, result, mergedColumnGroupStatistics);
       if (groupsToMergeIds.isEmpty()) {
         result.add(new ArrayList<>());
       }
-      result.get(mainGroupIndex).add(line);
+      result.get(indexInResult).add(line);
 
       for (var element : newColumnValues) {
         columnGroupStatistics.get(element.index())
-            .put(element.value(), mainGroupIndex);
+            .put(element.value(), indexInResult);
       }
       for (var groupToMergeId : groupsToMergeIds) {
-        if (groupToMergeId == mainGroupIndex) {
+        if (groupToMergeId == indexInResult || mergedColumnGroupStatistics.containsKey(groupToMergeId)) {
           continue;
         }
-        result.get(mainGroupIndex)
+        result.get(indexInResult)
             .addAll(result.get(groupToMergeId));
         result.set(groupToMergeId, null);
+        mergedColumnGroupStatistics.put(groupToMergeId, indexInResult);
+        if (mergedColumnGroupStatistics.containsValue(groupToMergeId)) {
+          for (var entry : mergedColumnGroupStatistics.entrySet()) {
+            if (entry.getValue().equals(groupToMergeId)) {
+              entry.setValue(indexInResult);
+            }
+          }
+        }
       }
     }
     return result.stream()
         .filter(Objects::nonNull)
         .filter(list -> list.size() > 1)
         .toList();
+  }
+
+  private static int getIndexInResult(TreeSet<Integer> groupsToMergeIds, List<List<String>> result,
+                                      Map<Integer, Integer> mergedColumnGroupStatistics) {
+    int mainGroupIndex = groupsToMergeIds.isEmpty() ? result.size() : groupsToMergeIds.first();
+    return mergedColumnGroupStatistics.getOrDefault(mainGroupIndex, mainGroupIndex);
   }
 
   private static List<String> getSeparatedNumbers(String line) {

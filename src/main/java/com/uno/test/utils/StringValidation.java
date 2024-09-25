@@ -22,7 +22,7 @@ public class StringValidation {
         return false;
       }
       if (currentSymbol == COLUMN_SEPARATOR
-          && (s.charAt(i - 1) != ELEMENT_QUOTE || s.charAt(i + 1) != ELEMENT_QUOTE)) {
+          && ((i > 0 && s.charAt(i - 1) != ELEMENT_QUOTE) || (i < s.length() - 1 && s.charAt(i + 1) != ELEMENT_QUOTE))) {
         return false;
       }
       if (currentSymbol == ELEMENT_QUOTE) {
