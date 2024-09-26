@@ -6,14 +6,16 @@ import com.uno.test.processor.GroupingProcessor;
 import com.uno.test.utils.exception.FileNameNotFound;
 import java.io.File;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Main {
   private static final String OUTPUT_FILE_NAME = "result.txt";
 
   public static void main(String[] args) {
     if (args.length < 1) {
-      System.err.println("Неправильное название файла");
-      throw new FileNameNotFound("Неправильное название файла");
+      LOG.error("Название файла отсутствует");
+      throw new FileNameNotFound("Название файла отсутствует");
     }
     String fileName = args[0];
 

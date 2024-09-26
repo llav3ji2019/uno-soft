@@ -9,10 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Класс для чтения исходных данных из файла.
  */
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataReader {
   /**
    * Чтение исходных данных из файла.
@@ -26,7 +31,7 @@ public class DataReader {
         final Set<String> result = new HashSet<>();
         while (in.hasNextLine()) {
           String curWord = in.nextLine();
-          if (!StringValidation.isValid(curWord)) {
+          if (StringValidation.isInvalid(curWord)) {
             continue;
           }
           result.add(curWord);
@@ -35,12 +40,8 @@ public class DataReader {
             .toList();
       }
     } catch (IOException e) {
-      System.err.println("Невозможно прочитать информацию из файла: " + file);
+      LOG.error("Невозможно прочитать информацию из файла: {}", file.getPath());
       throw new FileReadException(e.getMessage());
     }
-  }
-
-  private DataReader() {
-
   }
 }

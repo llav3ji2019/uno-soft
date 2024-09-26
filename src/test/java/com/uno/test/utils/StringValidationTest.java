@@ -14,17 +14,21 @@ class StringValidationTest {
   }
 
   @Test
-  @DisplayName("Проверка корректной строки с пустой колонкой")
+  @DisplayName("Проверка корректной строки с пустыми колонками")
   void testCorrectStringWithSingleColumn() {
     String validString = "\"\"";
+    Assertions.assertTrue(StringValidation.isValid(validString));
+    validString = "";
+    Assertions.assertTrue(StringValidation.isValid(validString));
+    validString = "\"\";;";
     Assertions.assertTrue(StringValidation.isValid(validString));
   }
 
   @Test
   @DisplayName("Проверка некорректной строки с дублированным разделителем между колонок")
-  void testIncorrectStringWithDuplecatedSeparator() {
-    String invalidString = "\"\";;\"\"";
-    Assertions.assertFalse(StringValidation.isValid(invalidString));
+  void testCorrectStringWithDuplecatedSeparator() {
+    String validString = "\"\";;\"\"";
+    Assertions.assertTrue(StringValidation.isValid(validString));
   }
 
   @Test
@@ -46,6 +50,9 @@ class StringValidationTest {
   void testIncorrectStringWithTwoExtraQuote() {
     String invalidString = "\"79855053897\"83100000\"580443402\";\"200000133000191\"";
     Assertions.assertFalse(StringValidation.isValid(invalidString));
+
+    invalidString = "\"8383200000741652251\";\";\"123\"\"";
+    Assertions.assertFalse(StringValidation.isValid(invalidString));
   }
 
   @Test
@@ -53,5 +60,12 @@ class StringValidationTest {
   void testIncorrectStringWithSingleExtraQuoteAndSingleColumn() {
     String invalidString = "\"8383\"200000741652251\"";
     Assertions.assertFalse(StringValidation.isValid(invalidString));
+  }
+
+  @Test
+  @DisplayName("Проверка некорректной строки с пустым значением между разделителей колонок")
+  void testIncorrectStringWithNoValueBetweenColumnSeparators() {
+    String invalidString = "\"8383200000741652251\";;\"123\"";
+    Assertions.assertTrue(StringValidation.isValid(invalidString));
   }
 }

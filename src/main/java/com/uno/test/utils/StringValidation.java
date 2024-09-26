@@ -1,42 +1,49 @@
 package com.uno.test.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Класс для валидации строки.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StringValidation {
   private static final char ELEMENT_QUOTE = '"';
   private static final char COLUMN_SEPARATOR = ';';
 
   /**
-   * Метод Валидации строки.
+   * Метод для валидации строки.
    *
    * @param s - исходная строка
    * @return если строка соответствует требованиям задачи, то true, а иначе - false
    */
   public static boolean isValid(String s) {
     int quoteCounter = 0;
-    int separatorCounter = 0;
     for (int i = 0; i < s.length(); i++) {
       char currentSymbol = s.charAt(i);
-      if (i == 0 && (currentSymbol != ELEMENT_QUOTE && currentSymbol != COLUMN_SEPARATOR)) {
-        return false;
-      }
-      if (currentSymbol == COLUMN_SEPARATOR
-          && ((i > 0 && s.charAt(i - 1) != ELEMENT_QUOTE) || (i < s.length() - 1 && s.charAt(i + 1) != ELEMENT_QUOTE))) {
-        return false;
-      }
       if (currentSymbol == ELEMENT_QUOTE) {
-        quoteCounter++;
-        continue;
-      }
-      if (currentSymbol == COLUMN_SEPARATOR) {
-        separatorCounter++;
+        if (quoteCounter == 0) {
+          quoteCounter++;
+          continue;
+        }
+        if (quoteCounter == 1) {
+          if (i < s.length() - 1 && s.charAt(i + 1) != COLUMN_SEPARATOR) {
+            return false;
+          }
+          if (i == s.length() - 1) {
+            return true;
+          }
+          i++;
+          quoteCounter = 0;
+        }
+      } else if (currentSymbol == COLUMN_SEPARATOR && (quoteCounter != 2 && quoteCounter != 0)) {
+          return false;
       }
     }
-    return quoteCounter % 2 == 0 && quoteCounter / 2 - 1 == separatorCounter;
+    return quoteCounter % 2 == 0;
   }
 
-  private StringValidation() {
-
+  public static boolean isInvalid(String s) {
+    return !isValid(s);
   }
 }
